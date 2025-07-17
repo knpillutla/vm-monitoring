@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: victoria-dev-values
+data:
+  values.yaml: |
+    vmagent:
+      scrapeInterval: 30s
+
+    grafana:
+      adminPassword: dev-graph-pwd

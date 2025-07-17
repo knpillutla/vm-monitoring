@@ -1,0 +1,49 @@
+vmagent:
+  enabled: true
+
+vmsingle:
+  enabled: true
+
+vmalert:
+  enabled: true
+
+victoria-metrics-operator:
+  enabled: true
+
+vmcluster:
+  enabled: true
+  fullnameOverride: vm-logs
+  retentionPeriod: 1
+  replicaCount: 1
+  vmselect:
+    replicaCount: 1
+  vminsert:
+    replicaCount: 1
+  vmstorage:
+    replicaCount: 1
+    storageDataPath: "/vm-data"
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+
+grafana:
+  enabled: true
+  defaultDashboardsEnabled: true
+  additionalDataSources:
+    - name: VMLogs
+      type: "victorialogs"
+      url: "http://vm-logs-vmselect:8481/select"
+      access: proxy
+      jsonData:
+        logLevelField: "level"
+        timestampField: "ts"
+        datasourceId: 1
+
+extraScrapeConfigs: |
+  - job_name: "vm-log-scraper"
+    static_configs:
+      - targets: ["localhost"]
+        labels:
+          __path__: /var/log/containers/*.log
+          job: kubernetes-logs
