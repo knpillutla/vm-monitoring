@@ -3,9 +3,12 @@ kind: Kustomization
 
 resources:
   - ../../base/victoria-metrics-stack
-
-patchesStrategicMerge:
-  - values-dev.yaml
-
-resources:
   - ../../base/fluent-bit
+
+configMapGenerator:
+  - name: victoria-dev-values
+    files:
+      - values.yaml=values-dev.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
